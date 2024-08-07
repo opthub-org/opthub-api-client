@@ -1,6 +1,8 @@
 #!/bin/sh
 SCRIPT_DIR=$(cd $(dirname $0) && pwd)
 
+echo -n "一括コミット&pushを行う場合はコミットメッセージを入力（空入力で生成のみ）: "
+read COMMIT_MSG
 
 for GEN_SCRIPT in $(ls $SCRIPT_DIR/codegen-*.sh); do
     FILENAME=$(basename $GEN_SCRIPT)
@@ -12,4 +14,12 @@ for GEN_SCRIPT in $(ls $SCRIPT_DIR/codegen-*.sh); do
     find $SCRIPT_DIR/opthub-api-client-$LANG -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
     $GEN_SCRIPT
     cp $SCRIPT_DIR/LICENSE $SCRIPT_DIR/opthub-api-client-$LANG/
+
+    if [ "$COMMIT_MSG" != "" ]; then
+        pushd $SCRIPT_DIR/opthub-api-client-$LANG
+        git add .
+        git commit -m "$COMMIT_MSG"
+        git push origin HEAD:main
+        popd
+    fi
 done
