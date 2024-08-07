@@ -12,6 +12,10 @@ OptHubの公開REST APIです。
         [Swaggerの公式エディタ](https://editor.swagger.io/)にこのファイルの内容を入力すると、
         API仕様がわかりやすく表示されます。
 
+* `codegen-all.sh`
+
+    対応している全言語向けのライブラリコードを一括生成するスクリプトです。
+
 * `{python,cpp,c,java,...}-codegen.sh`
 
     `opthub-spec.yaml`で記述された仕様に基づき、各言語のAPIクライアントライブラリを自動生成するスクリプトです。
