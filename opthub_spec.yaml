@@ -41,7 +41,11 @@ paths:
           description: 解空間の変数
           required: true
           schema:
-            type: object
+            type: array
+            items:
+              type: number
+              format: double
+            example: [1.234, -5.678, 9.1011]
       responses:
         '200':
           description: Successful operation
@@ -148,7 +152,11 @@ components:
           example: 4
         variable:
           description: 解空間の変数
-          type: object
+          type: array
+          items:
+            type: number
+            format: double
+          example: [1.234, -5.678, 9.1011]
         createdAt:
           description: 作成日時
           type: string
