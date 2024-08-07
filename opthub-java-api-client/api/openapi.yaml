@@ -1,0 +1,201 @@
+openapi: 3.0.3
+info:
+  contact:
+    email: dev@opthub.ai
+  description: OptHubの公開REST APIです。
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit/
+  termsOfService: https://example.com/todo/opthub-api-term-of-service
+  title: OptHub REST API
+  version: 0.1.0
+servers:
+- url: https://example.com/todo/opthub-api-endpoint
+tags:
+- description: 解に関する操作
+  name: solution
+- description: 過去コンペティションへのアクセス
+  name: analyzer
+paths:
+  /solution:
+    get:
+      operationId: getSolution
+      parameters:
+      - description: 競技のID
+        example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+        explode: true
+        in: query
+        name: matchId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: form
+      - description: 参加者のID
+        example: 912f548d-2bbe-48ab-90ce-e96dae38377d
+        explode: true
+        in: query
+        name: participantId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: form
+      - description: 試行番号
+        explode: true
+        in: query
+        name: trialNo
+        required: true
+        schema:
+          example: 4
+          format: int32
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Solution'
+          description: Successful operation
+        default:
+          description: successful operation
+      security:
+      - ApiKeyAuth: []
+      summary: 解の取得
+      tags:
+      - solution
+      x-accepts:
+      - application/json
+    post:
+      operationId: createSolution
+      parameters:
+      - description: 競技のID
+        example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+        explode: true
+        in: query
+        name: matchId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: form
+      - description: 解空間の変数
+        explode: true
+        in: query
+        name: variable
+        required: true
+        schema:
+          type: object
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSolutionResponse'
+          description: Successful operation
+        default:
+          description: successful operation
+      security:
+      - ApiKeyAuth: []
+      summary: 解の作成
+      tags:
+      - solution
+      x-accepts:
+      - application/json
+components:
+  schemas:
+    CreateSolutionResponse:
+      description: 解の作成リクエストの結果
+      example:
+        participantId: 912f548d-2bbe-48ab-90ce-e96dae38377d
+        trialNo: 4
+        participantType: User
+        matchId: 5d7fc778-3e59-4128-a797-2e423c0aa461
+      properties:
+        matchId:
+          description: 競技のID
+          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+          format: uuid
+          type: string
+        participantType:
+          $ref: '#/components/schemas/ParticipantType'
+        participantId:
+          description: 参加者のID
+          example: 912f548d-2bbe-48ab-90ce-e96dae38377d
+          format: uuid
+          type: string
+        trialNo:
+          description: 試行番号
+          example: 4
+          format: int32
+          type: integer
+      required:
+      - matchId
+      - participantId
+      - participantType
+      - trialNo
+      type: object
+    Solution:
+      description: 解
+      example:
+        participantId: 912f548d-2bbe-48ab-90ce-e96dae38377d
+        createdAt: 2024-08-06T10:11:45.789Z
+        trialNo: 4
+        participantType: User
+        variable: "{}"
+        userId: 1e892e70-47ba-4c8e-8563-6aea9019e334
+        matchId: 5d7fc778-3e59-4128-a797-2e423c0aa461
+      properties:
+        matchId:
+          description: 競技のID
+          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+          format: uuid
+          type: string
+        participantType:
+          $ref: '#/components/schemas/ParticipantType'
+        participantId:
+          description: 参加者のID
+          example: 912f548d-2bbe-48ab-90ce-e96dae38377d
+          format: uuid
+          type: string
+        trialNo:
+          description: 試行番号
+          example: 4
+          format: int32
+          type: integer
+        variable:
+          description: 解空間の変数
+          type: object
+        createdAt:
+          description: 作成日時
+          example: 2024-08-06T10:11:45.789Z
+          format: date-time
+          type: string
+        userId:
+          description: 作成したユーザのID
+          example: 1e892e70-47ba-4c8e-8563-6aea9019e334
+          format: uuid
+          type: string
+      required:
+      - createdAt
+      - matchId
+      - participantId
+      - participantType
+      - trialNo
+      - variable
+      type: object
+    ParticipantType:
+      description: 参加者の種別
+      enum:
+      - User
+      - Team
+      example: User
+      type: string
+  securitySchemes:
+    ApiKeyAuth:
+      in: header
+      name: Authorization
+      type: apiKey
+
