@@ -1,0 +1,12 @@
+[submodule "opthub-api-client-ts"]
+	path = opthub-api-client-ts
+	url = https://github.com/opthub-org/opthub-api-client-ts
+[submodule "opthub-api-client-cpp"]
+	path = opthub-api-client-cpp
+	url = https://github.com/opthub-org/opthub-api-client-cpp
+[submodule "opthub-api-client-python"]
+	path = opthub-api-client-python
+	url = https://github.com/opthub-org/opthub-api-client-python
+[submodule "opthub-api-client-java"]
+	path = opthub-api-client-java
+	url = https://github.com/opthub-org/opthub-api-client-java

@@ -5,4 +5,7 @@ docker run --rm -u $(id -u):$(id -g) -v $SCRIPT_DIR:/local openapitools/openapi-
     generate \
         --input-spec /local/opthub_spec.yaml \
         --generator-name cpp-restsdk \
-        --output /local/opthub-cpp-api-client \
+        --output /local/opthub-api-client-cpp \
+        --package-name opthub-api-client-cpp \
+        --git-user-id opthub-org \
+        --git-repo-id opthub-api-client-cpp

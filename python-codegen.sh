@@ -5,4 +5,8 @@ docker run --rm -u $(id -u):$(id -g) -v $SCRIPT_DIR:/local openapitools/openapi-
     generate \
         --input-spec /local/opthub_spec.yaml \
         --generator-name python \
-        --output /local/opthub-python-api-client \
+        --output /local/opthub-api-client-python \
+        --package-name opthub-api-client-python \
+        --git-user-id opthub-org \
+        --git-repo-id opthub-api-client-python
+
