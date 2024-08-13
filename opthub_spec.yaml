@@ -187,4 +187,4 @@ components:
     ApiKeyAuth:
       type: apiKey
       in: header
-      name: Authorization
+      name: x-api-key
