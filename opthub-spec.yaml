@@ -222,8 +222,7 @@ components:
           description: 試行番号
           example: 4
       required:
-        - participantType
-        - participantId
+        - participant
         - trialNo
 
     Solution:
@@ -261,8 +260,7 @@ components:
           example: 1e892e70-47ba-4c8e-8563-6aea9019e334
       required:
         - matchId
-        - participantType
-        - participantId
+        - participant
         - trialNo
         - variable
         - createdAt
