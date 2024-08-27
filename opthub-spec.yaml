@@ -217,6 +217,32 @@ paths:
       security:
         - ApiKeyAuth: []
 
+  /participant/{id}:
+    get:
+      tags:
+        - participant
+      summary: Retrieve the participant information
+      operationId: getParticipant
+      parameters:
+        - name: id
+          in: path
+          description: Participant ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/ParticipantId'
+          example: 912f548d-2bbe-48ab-90ce-e96dae38377d
+      responses:
+        '200':
+          description: Participant information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Participant'
+        '404':
+          description: Participant not found
+      security:
+        - ApiKeyAuth: []
+
 components:
   schemas:
     CreateSolutionResponse:
