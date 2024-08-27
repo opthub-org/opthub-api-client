@@ -1,5 +1,6 @@
 #!/bin/sh
 SCRIPT_DIR=$(cd $(dirname $0) && pwd)
+set -e
 
 echo -n "一括コミット&pushを行う場合はコミットメッセージを入力（空入力で生成のみ）: "
 read COMMIT_MSG
@@ -23,3 +24,6 @@ for GEN_SCRIPT in $(ls $SCRIPT_DIR/codegen-*.sh); do
         popd
     fi
 done
+
+echo "Generating documentation UI..."
+$SCRIPT_DIR/generate-ui.sh
