@@ -12,12 +12,12 @@ OptHubの公開REST APIです。
         [Swaggerの公式エディタ](https://editor.swagger.io/)にこのファイルの内容を入力すると、
         API仕様がわかりやすく表示されます。
 
+以下のスクリプトの実行にはdockerのインストールが必要です。
+
 * `codegen-{python,cpp,c,java,...}.sh`
 
     `opthub-spec.yaml`で記述された仕様に基づき、各言語のAPIクライアントコードを自動生成するスクリプトです。
     実行すると、`opthub-api-client-{python,cpp,c,java,...}`ディレクトリが出力されます。
-
-    実行には`docker`のインストールが必要です。
 
     もし生成物に何か修正を加えたい場合、
     生成物のgitサブモジュール (`opthub-api-client-.../`) を直接編集するのではなく（仕様変更で再生成する際にまた1から編集しなおすことになるため）、パッチファイルを作成し、シェルスクリプト内で`patch`コマンドなどでパッチを当てる形をとってください。
@@ -34,3 +34,7 @@ OptHubの公開REST APIです。
 * `generate-ui.sh`
 
     Swagger UI（REST APIの仕様のWebドキュメント）の静的サイトを自動生成します。
+
+* `run-swagger-editor.sh`
+
+    API仕様書の.yamlを書く際、エラーチェックや可視化をしてくれるWebツールであるSwagger Editorを http://localhost:80/ で起動します。

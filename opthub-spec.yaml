@@ -19,9 +19,119 @@ tags:
     description: 解に関する操作
   - name: analyzer
     description: 過去コンペティションへのアクセス
+  - name: competition
+    description: コンペティションに関する操作
+  - name: match
+    description: 競技に関する操作
+  - name: alias
+    description: エイリアスに関する操作
 
 paths:
-  /solution:
+  /competition/alias/{alias}:
+    get:
+      tags:
+        - competition
+        - alias
+      summary: コンペティションのエイリアスからコンペティションIDを取得
+      operationId: resolveCompetitionIdByAlias
+      parameters:
+        - name: alias
+          in: path
+          description: コンペティションのエイリアス
+          required: true
+          schema:
+            $ref: '#/components/schemas/CompetitionAlias'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompetitionId'
+        default:
+          description: successful operation
+      security:
+        - ApiKeyAuth: []
+
+  /competition/{id}/alias:
+    get:
+      tags:
+        - competition
+        - alias
+      summary: コンペティションIDからコンペティションのエイリアスを取得
+      operationId: resolveCompetitionAliasById
+      parameters:
+        - name: id
+          in: path
+          description: コンペティションのID
+          required: true
+          schema:
+            $ref: '#/components/schemas/CompetitionId'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompetitionAlias'
+        default:
+          description: successful operation
+      security:
+        - ApiKeyAuth: []
+
+  /competition/match/alias/{alias}:
+    get:
+      tags:
+        - match
+        - alias
+      summary: 競技のエイリアスから競技IDを取得
+      operationId: resolveMatchIdByAlias
+      parameters:
+        - name: alias
+          in: path
+          description: 競技のエイリアス
+          required: true
+          schema:
+            $ref: '#/components/schemas/MatchAlias'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchId'
+        default:
+          description: successful operation
+      security:
+        - ApiKeyAuth: []
+
+  /competition/match/{matchId}/alias:
+    get:
+      tags:
+        - match
+        - alias
+      summary: 競技IDから競技のエイリアスを取得
+      operationId: resolveMatchAliasById
+      parameters:
+        - name: matchId
+          in: path
+          description: 競技のID
+          required: true
+          schema:
+            $ref: '#/components/schemas/MatchId'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchAlias'
+        default:
+          description: successful operation
+      security:
+        - ApiKeyAuth: []
+
+  /competition/match/{matchId}/solution:
     post:
       tags:
         - solution
@@ -29,7 +139,7 @@ paths:
       operationId: createSolution
       parameters:
         - name: matchId
-          in: query
+          in: path
           description: 競技のID
           required: true
           schema:
@@ -65,7 +175,7 @@ paths:
       operationId: getSolution
       parameters:
         - name: matchId
-          in: query
+          in: path
           description: 競技のID
           required: true
           schema:
@@ -77,9 +187,7 @@ paths:
           description: 参加者のID
           required: true
           schema:
-            type: string
-            format: uuid
-          example: 912f548d-2bbe-48ab-90ce-e96dae38377d
+            $ref: '#/components/schemas/ParticipantId'
         - name: trialNo
           in: query
           description: 試行番号
@@ -106,25 +214,14 @@ components:
       description: 解の作成リクエストの結果
       type: object
       properties:
-        matchId:
-          type: string
-          format: uuid
-          description: 競技のID
-          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
-        participantType:
-          $ref: '#/components/schemas/ParticipantType'
-        participantId:
-          type: string
-          format: uuid
-          description: 参加者のID
-          example: 912f548d-2bbe-48ab-90ce-e96dae38377d
+        participant:
+          $ref: '#/components/schemas/Participant'
         trialNo:
           type: integer
           format: int32
           description: 試行番号
           example: 4
       required:
-        - matchId
         - participantType
         - participantId
         - trialNo
@@ -138,13 +235,8 @@ components:
           type: string
           format: uuid
           example: 5d7fc778-3e59-4128-a797-2e423c0aa461
-        participantType:
-          $ref: '#/components/schemas/ParticipantType'
-        participantId:
-          description: 参加者のID
-          type: string
-          format: uuid
-          example: 912f548d-2bbe-48ab-90ce-e96dae38377d
+        participant:
+          $ref: '#/components/schemas/Participant'
         trialNo:
           description: 試行番号
           type: integer
@@ -175,6 +267,24 @@ components:
         - variable
         - createdAt
 
+    Participant:
+      description: 参加者の情報
+      type: object
+      properties:
+        participantId:
+          $ref: '#/components/schemas/ParticipantId'
+        participantType:
+          $ref: '#/components/schemas/ParticipantType'
+      required:
+        - participantId
+        - participantType
+
+    ParticipantId:
+      description: 参加者のID
+      type: string
+      format: uuid
+      example: 912f548d-2bbe-48ab-90ce-e96dae38377d
+
     ParticipantType:
       description: 参加者の種別
       type: string
@@ -182,6 +292,28 @@ components:
         - User
         - Team
       example: User
+
+    CompetitionId:
+      description: コンペティションのID
+      type: string
+      format: uuid
+      example: 42c999a1-a30c-47ef-b656-eb49f67488dc
+
+    CompetitionAlias:
+      description: コンペティションのエイリアス
+      type: string
+      example: "competition123"
+
+    MatchId:
+      description: 競技のID
+      type: string
+      format: uuid
+      example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+
+    MatchAlias:
+      description: 競技のエイリアス
+      type: string
+      example: "match123"
 
   securitySchemes:
     ApiKeyAuth:

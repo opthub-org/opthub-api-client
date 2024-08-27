@@ -9,7 +9,7 @@ rm -rf ui
 mkdir ui
 curl -L https://github.com/swagger-api/swagger-ui/archive/refs/tags/v5.17.14.tar.gz | tar xvzf - -C ui swagger-ui-5.17.14/dist
 pushd ui/swagger-ui-5.17.14/dist
-cp ../../../opthub-spec.yaml ./
+ln -s ../../../opthub-spec.yaml ./
 sed -i -e 's/https:\/\/petstore.swagger.io\/v2\/swagger.json/opthub-spec.yaml/' swagger-initializer.js
 popd
 popd
