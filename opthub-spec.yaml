@@ -43,13 +43,13 @@ paths:
             $ref: '#/components/schemas/CompetitionAlias'
       responses:
         '200':
-          description: Successful operation
+          description: コンペティションのID
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CompetitionId'
-        default:
-          description: successful operation
+        '404':
+          description: 存在しないコンペティションエイリアス
       security:
         - ApiKeyAuth: []
 
@@ -69,13 +69,13 @@ paths:
             $ref: '#/components/schemas/CompetitionId'
       responses:
         '200':
-          description: Successful operation
+          description: コンペティションのエイリアス
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CompetitionAlias'
-        default:
-          description: successful operation
+        '404':
+          description: 存在しないコンペティションID
       security:
         - ApiKeyAuth: []
 
@@ -95,13 +95,13 @@ paths:
             $ref: '#/components/schemas/MatchAlias'
       responses:
         '200':
-          description: Successful operation
+          description: 競技のID
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/MatchId'
-        default:
-          description: successful operation
+        '404':
+          description: 存在しない競技エイリアス
       security:
         - ApiKeyAuth: []
 
@@ -121,13 +121,13 @@ paths:
             $ref: '#/components/schemas/MatchId'
       responses:
         '200':
-          description: Successful operation
+          description: 競技のエイリアス
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/MatchAlias'
-        default:
-          description: successful operation
+        '404':
+          description: 存在しない競技ID
       security:
         - ApiKeyAuth: []
 
@@ -143,9 +143,7 @@ paths:
           description: 競技のID
           required: true
           schema:
-            type: string
-            format: uuid
-          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+            $ref: '#/components/schemas/MatchId'
         - name: variable
           in: query
           description: 解空間の変数
@@ -158,13 +156,13 @@ paths:
             example: [1.234, -5.678, 9.1011]
       responses:
         '200':
-          description: Successful operation
+          description: 作成された解の情報
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateSolutionResponse'
-        default:
-          description: successful operation
+        '404':
+          description: 存在しない競技ID
       security:
         - ApiKeyAuth: []
 
@@ -179,9 +177,7 @@ paths:
           description: 競技のID
           required: true
           schema:
-            type: string
-            format: uuid
-          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+            $ref: '#/components/schemas/MatchId'
         - name: participantId
           in: query
           description: 参加者のID
@@ -198,20 +194,24 @@ paths:
             example: 4
       responses:
         '200':
-          description: Successful operation
+          description: 解の情報
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Solution'
-        default:
-          description: successful operation
+        '404':
+          description: クエリで指定された提出解が存在しない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSolutionError'
       security:
         - ApiKeyAuth: []
 
 components:
   schemas:
     CreateSolutionResponse:
-      description: 解の作成リクエストの結果
+      description: 作成された解の情報
       type: object
       properties:
         participant:
@@ -264,6 +264,14 @@ components:
         - trialNo
         - variable
         - createdAt
+
+    GetSolutionError:
+      description: 解の取得に失敗
+      type: string
+      enum:
+        - InvalidMatchId
+        - InvalidParticipantId
+        - TrialNotFound
 
     Participant:
       description: 参加者の情報
