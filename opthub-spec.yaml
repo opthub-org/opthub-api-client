@@ -9,7 +9,7 @@ info:
   license:
     name: MIT
     url: https://opensource.org/license/mit/
-  version: 0.1.0
+  version: 0.1.1
 
 servers:
   - url: https://example.com/todo/opthub-api-endpoint
@@ -261,19 +261,9 @@ components:
         - trialNo
 
     Solution:
-      description: 解
+      description: Solution information
       type: object
       properties:
-        matchId:
-          description: Match ID
-          type: string
-          format: uuid
-          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
-        trialNo:
-          description: Trial number
-          type: integer
-          format: int32
-          example: 4
         variable:
           description: Solution space variable
           type: array
@@ -292,8 +282,6 @@ components:
           format: uuid
           example: 1e892e70-47ba-4c8e-8563-6aea9019e334
       required:
-        - matchId
-        - trialNo
         - variable
         - createdAt
 
