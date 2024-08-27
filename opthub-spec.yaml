@@ -23,6 +23,8 @@ tags:
     description: Operations about competition.
   - name: match
     description: Operations about match.
+  - name: participant
+    description: Operations about participant.
   - name: alias
     description: Operations about alias.
 
@@ -50,7 +52,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CompetitionId'
         '404':
-          description: Competition alias not found
+          description: Competition not found
       security:
         - ApiKeyAuth: []
 
@@ -77,7 +79,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CompetitionAlias'
         '404':
-          description: Competition ID not found
+          description: Competition not found
       security:
         - ApiKeyAuth: []
 
@@ -104,7 +106,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/MatchId'
         '404':
-          description: Match alias not found
+          description: Match not found
       security:
         - ApiKeyAuth: []
 
@@ -131,7 +133,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/MatchAlias'
         '404':
-          description: Match ID not found
+          description: Match not found
       security:
         - ApiKeyAuth: []
 
@@ -167,7 +169,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CreateSolutionResponse'
         '404':
-          description: Match ID not found
+          description: Match not found
       security:
         - ApiKeyAuth: []
 
@@ -221,15 +223,15 @@ components:
       description: Information of the created solution
       type: object
       properties:
-        participant:
-          $ref: '#/components/schemas/Participant'
+        participantId:
+          $ref: '#/components/schemas/ParticipantId'
         trialNo:
           type: integer
           format: int32
           description: Trial number
           example: 4
       required:
-        - participant
+        - participantId
         - trialNo
 
     Solution:
@@ -241,8 +243,6 @@ components:
           type: string
           format: uuid
           example: 5d7fc778-3e59-4128-a797-2e423c0aa461
-        participant:
-          $ref: '#/components/schemas/Participant'
         trialNo:
           description: Trial number
           type: integer
@@ -267,7 +267,6 @@ components:
           example: 1e892e70-47ba-4c8e-8563-6aea9019e334
       required:
         - matchId
-        - participant
         - trialNo
         - variable
         - createdAt
@@ -284,12 +283,9 @@ components:
       description: Participant information
       type: object
       properties:
-        participantId:
-          $ref: '#/components/schemas/ParticipantId'
         participantType:
           $ref: '#/components/schemas/ParticipantType'
       required:
-        - participantId
         - participantType
 
     ParticipantId:
