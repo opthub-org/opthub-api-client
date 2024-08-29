@@ -62,8 +62,7 @@ paths:
       tags:
         - trial
       summary: |-
-        Retrieve a specific trial related to the solution submitted by the participant themselves,
-        belonging to a particular match.
+        Retrieve a specific trial related to the solution submitted by the participant themselves.
       operationId: getMatchTrial
       parameters:
         - name: matchUuid
@@ -81,6 +80,7 @@ paths:
             type: integer
             format: int32
             example: 4
+          example: 4
       responses:
         '200':
           description: Information of the trial
@@ -96,6 +96,47 @@ paths:
                 $ref: '#/components/schemas/MatchTrialNotFound'
       security:
         - ApiKeyAuth: []
+
+  /matches/{matchUuid}/trials/{trialNo}/solution:
+    get:
+      tags:
+        - trial
+        - solution
+      summary: Retrieve a solution submitted by the participant themselves.
+      operationId: getSolution
+      parameters:
+        - name: matchUuid
+          in: path
+          description: Match UUID
+          required: true
+          schema:
+            $ref: '#/components/schemas/MatchUuid'
+          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+        - name: trialNo
+          in: path
+          description: Trial number
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 4
+          example: 4
+      responses:
+        '200':
+          description: Information of the Solution
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Solution'
+        '404':
+          description: The trial specified in the query was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchTrialNotFound'
+      security:
+        - ApiKeyAuth: []
+
 
 components:
   schemas:
@@ -118,9 +159,6 @@ components:
         matchTrialStatus:
           description: Status of the Trial
           $ref: '#/components/schemas/MatchTrialStatus'
-        solution:
-          description: Submitted Solution
-          $ref: '#/components/schemas/Solution'
         evaluation:
           description: Evaluation results
           $ref: '#/components/schemas/MatchTrialEvaluation'
@@ -129,7 +167,6 @@ components:
           $ref: '#/components/schemas/MatchTrialScore'
       required:
         - matchTrialStatus
-        - solution
 
     MatchTrialStatus:
       description: Status of the Trial
@@ -221,6 +258,7 @@ components:
           description: The value of the Score
           type: number
           format: double
+          example: 15.1617
         startedAt:
           description: Score calculation start date and time
           type: string
