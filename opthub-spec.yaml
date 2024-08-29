@@ -9,7 +9,7 @@ info:
   license:
     name: MIT
     url: https://opensource.org/license/mit/
-  version: 0.1.1
+  version: 0.2.0
 
 servers:
   - url: https://example.com/todo/opthub-api-endpoint
@@ -17,150 +17,34 @@ servers:
 tags:
   - name: solution
     description: Operations about solution.
-  - name: analyzer
-    description: Access to past competitions.
-  - name: competition
-    description: Operations about competition.
-  - name: match
-    description: Operations about match.
-  - name: participant
-    description: Operations about participant.
-  - name: alias
-    description: Operations about alias.
+  - name: trial
+    description: Operations about trial.
 
 paths:
-  /competition/alias/{alias}:
-    get:
-      tags:
-        - competition
-        - alias
-      summary: Retrieve the competition ID from the competition alias
-      operationId: resolveCompetitionIdByAlias
-      parameters:
-        - name: alias
-          in: path
-          description: Competition alias
-          required: true
-          schema:
-            $ref: '#/components/schemas/CompetitionAlias'
-          example: "competition123"
-      responses:
-        '200':
-          description: Competition ID
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CompetitionId'
-        '404':
-          description: Competition not found
-      security:
-        - ApiKeyAuth: []
-
-  /competition/{id}/alias:
-    get:
-      tags:
-        - competition
-        - alias
-      summary: Retrieve the competition alias from the competition ID
-      operationId: resolveCompetitionAliasById
-      parameters:
-        - name: id
-          in: path
-          description: Competition ID
-          required: true
-          schema:
-            $ref: '#/components/schemas/CompetitionId'
-          example: 42c999a1-a30c-47ef-b656-eb49f67488dc
-      responses:
-        '200':
-          description: Competition alias
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CompetitionAlias'
-        '404':
-          description: Competition not found
-      security:
-        - ApiKeyAuth: []
-
-  /competition/match/alias/{alias}:
-    get:
-      tags:
-        - match
-        - alias
-      summary: Retrieve the match ID from the match alias
-      operationId: resolveMatchIdByAlias
-      parameters:
-        - name: alias
-          in: path
-          description: Match alias
-          required: true
-          schema:
-            $ref: '#/components/schemas/MatchAlias'
-          example: "match123"
-      responses:
-        '200':
-          description: Match ID
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MatchId'
-        '404':
-          description: Match not found
-      security:
-        - ApiKeyAuth: []
-
-  /competition/match/{matchId}/alias:
-    get:
-      tags:
-        - match
-        - alias
-      summary: Retrieve the match alias from the match ID
-      operationId: resolveMatchAliasById
-      parameters:
-        - name: matchId
-          in: path
-          description: Match ID
-          required: true
-          schema:
-            $ref: '#/components/schemas/MatchId'
-          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
-      responses:
-        '200':
-          description: Match alias
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MatchAlias'
-        '404':
-          description: Match not found
-      security:
-        - ApiKeyAuth: []
-
-  /competition/match/{matchId}/solution:
+  /matches/{matchUuid}/solutions:
     post:
       tags:
         - solution
       summary: Create solution
       operationId: createSolution
       parameters:
-        - name: matchId
+        - name: matchUuid
           in: path
-          description: Match ID
+          description: Match UUID
           required: true
           schema:
-            $ref: '#/components/schemas/MatchId'
+            $ref: '#/components/schemas/MatchUuid'
           example: 5d7fc778-3e59-4128-a797-2e423c0aa461
-        - name: variable
-          in: query
-          description: Solution space variable
-          required: true
-          schema:
-            type: array
-            items:
-              type: number
-              format: double
-            example: [1.234, -5.678, 9.1011]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Solution space variable
+              type: array
+              items:
+                type: number
+                format: double
+              example: [1.234, -5.678, 9.1011]
       responses:
         '200':
           description: Information of the created solution
@@ -173,28 +57,24 @@ paths:
       security:
         - ApiKeyAuth: []
 
+  /matches/{matchUuid}/trials/{trialNo}:
     get:
       tags:
-        - solution
-      summary: Retrive solution
-      operationId: getSolution
+        - trial
+      summary: |-
+        Retrieve a specific trial related to the solution submitted by the participant themselves,
+        belonging to a particular match.
+      operationId: getMatchTrial
       parameters:
-        - name: matchId
+        - name: matchUuid
           in: path
-          description: Match ID
+          description: Match UUID
           required: true
           schema:
-            $ref: '#/components/schemas/MatchId'
+            $ref: '#/components/schemas/MatchUuid'
           example: 5d7fc778-3e59-4128-a797-2e423c0aa461
-        - name: participantId
-          in: query
-          description: Participant ID
-          required: true
-          schema:
-            $ref: '#/components/schemas/ParticipantId'
-          example: 912f548d-2bbe-48ab-90ce-e96dae38377d
         - name: trialNo
-          in: query
+          in: path
           description: Trial number
           required: true
           schema:
@@ -203,43 +83,17 @@ paths:
             example: 4
       responses:
         '200':
-          description: Information of the solution
+          description: Information of the trial
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Solution'
+                $ref: '#/components/schemas/MatchTrial'
         '404':
-          description: The created solution specified in the query was not found
+          description: The trial specified in the query was not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetSolutionError'
-      security:
-        - ApiKeyAuth: []
-
-  /participant/{id}:
-    get:
-      tags:
-        - participant
-      summary: Retrieve the participant information
-      operationId: getParticipant
-      parameters:
-        - name: id
-          in: path
-          description: Participant ID
-          required: true
-          schema:
-            $ref: '#/components/schemas/ParticipantId'
-          example: 912f548d-2bbe-48ab-90ce-e96dae38377d
-      responses:
-        '200':
-          description: Participant information
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Participant'
-        '404':
-          description: Participant not found
+                $ref: '#/components/schemas/MatchTrialNotFound'
       security:
         - ApiKeyAuth: []
 
@@ -249,16 +103,43 @@ components:
       description: Information of the created solution
       type: object
       properties:
-        participantId:
-          $ref: '#/components/schemas/ParticipantId'
         trialNo:
           type: integer
           format: int32
           description: Trial number
           example: 4
       required:
-        - participantId
         - trialNo
+
+    MatchTrial:
+      description: Match Trial information
+      type: object
+      properties:
+        matchTrialStatus:
+          description: Status of the Trial
+          $ref: '#/components/schemas/MatchTrialStatus'
+        solution:
+          description: Submitted Solution
+          $ref: '#/components/schemas/Solution'
+        evaluation:
+          description: Evaluation results
+          $ref: '#/components/schemas/MatchTrialEvaluation'
+        score:
+          description: Results of Score calculation
+          $ref: '#/components/schemas/MatchTrialScore'
+      required:
+        - matchTrialStatus
+        - solution
+
+    MatchTrialStatus:
+      description: Status of the Trial
+      type: string
+      enum:
+        - Evaluating
+        - Scoring
+        - Success
+        - EvaluatorFailed
+        - ScorerFailed
 
     Solution:
       description: Solution information
@@ -276,67 +157,111 @@ components:
           type: string
           format: date-time
           example: 2024-08-06T10:11:45.789Z
-        userId:
-          description: ID of the user who created it
-          type: string
-          format: uuid
-          example: 1e892e70-47ba-4c8e-8563-6aea9019e334
+        createdByParticipant:
+          description: UUID of the participant who created it
+          $ref: '#/components/schemas/ParticipantUuid'
+        createdByUser:
+          description: UUID of the user who created it
+          $ref: '#/components/schemas/UserUuid'
       required:
         - variable
         - createdAt
 
-    GetSolutionError:
-      description: Failed to retrieve the solution
-      type: string
-      enum:
-        - InvalidMatchId
-        - InvalidParticipantId
-        - TrialNotFound
-
-    Participant:
-      description: Participant information
+    MatchTrialEvaluation:
+      description: Evaluation results
       type: object
       properties:
-        participantType:
-          $ref: '#/components/schemas/ParticipantType'
+        objective:
+          description: The value of the objective function
+          type: array
+          items:
+            type: number
+            format: double
+          example: [12.1314]
+        constraint:
+          description: The value of the constraint condition
+          type: object
+        feasible:
+          description: Whether it is a feasible solution
+          type: boolean
+        extraInfo:
+          description: Auxiliary information for evaluation
+          type: object
+        startedAt:
+          description: Evaluation start date and time
+          type: string
+          format: date-time
+          example: 2024-08-29T10:12:58.123Z
+        finishedAt:
+          description: Evaluation end date and time
+          type: string
+          format: date-time
+          example: 2024-08-29T10:34:01.592Z
+        error:
+          description: Evaluation error information
+          type: string
+        status:
+          description: Evaluation status
+          $ref: '#/components/schemas/RunnerStatus'
       required:
-        - participantType
+        - status
 
-    ParticipantId:
-      description: Participant ID
-      type: string
-      format: uuid
-      example: 912f548d-2bbe-48ab-90ce-e96dae38377d
-
-    ParticipantType:
-      description: Participant type
+    RunnerStatus:
+      description: Status of the Trial
       type: string
       enum:
-        - User
-        - Team
-      example: User
+        - Success
+        - Failed
 
-    CompetitionId:
-      description: Competition ID
+    MatchTrialScore:
+      description: Results of Score calculation
+      type: object
+      properties:
+        value:
+          description: The value of the Score
+          type: number
+          format: double
+        startedAt:
+          description: Score calculation start date and time
+          type: string
+          format: date-time
+          example: 2024-08-29T10:12:59.123Z
+        finishedAt:
+          description: Score calculation end date and time
+          type: string
+          format: date-time
+          example: 2024-08-29T10:34:02.592Z
+        error:
+          description: Score calculation error information
+          type: string
+        status:
+          description: Score calculation status
+          $ref: '#/components/schemas/RunnerStatus'
+
+    MatchTrialNotFound:
+      description: The reason why the trial was not found.
       type: string
-      format: uuid
-      example: 42c999a1-a30c-47ef-b656-eb49f67488dc
+      enum:
+        - InvalidMatchUuid
+        - NoSuchTrialNo
 
-    CompetitionAlias:
-      description: Competition alias
-      type: string
-      example: "competition123"
-
-    MatchId:
-      description: Match ID
+    MatchUuid:
+      description: Match UUID
       type: string
       format: uuid
       example: 5d7fc778-3e59-4128-a797-2e423c0aa461
 
-    MatchAlias:
-      description: Match alias
+    ParticipantUuid:
+      description: Participant UUID
       type: string
-      example: "match123"
+      format: uuid
+      example: 912f548d-2bbe-48ab-90ce-e96dae38377d
+
+    UserUuid:
+      description: User UUID
+      type: string
+      format: uuid
+      example: 1e892e70-47ba-4c8e-8563-6aea9019e334
 
   securitySchemes:
     ApiKeyAuth:
