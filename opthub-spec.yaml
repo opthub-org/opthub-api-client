@@ -21,14 +21,14 @@ tags:
     description: Operations about trial.
 
 paths:
-  /matches/{matchUuid}/solutions:
+  /matches/{match_uuid}/solutions:
     post:
       tags:
         - solution
       summary: Create solution
       operationId: createSolution
       parameters:
-        - name: matchUuid
+        - name: match_uuid
           in: path
           description: Match UUID
           required: true
@@ -47,32 +47,32 @@ paths:
               example: [1.234, -5.678, 9.1011]
       responses:
         '200':
-          description: Information of the created solution
+          description: Information of the created Solution
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateSolutionResponse'
         '404':
-          description: Match not found
+          description: No such Match UUID
       security:
         - ApiKeyAuth: []
 
-  /matches/{matchUuid}/trials/{trialNo}:
+  /matches/{match_uuid}/trials/{trial_no}:
     get:
       tags:
         - trial
       summary: |-
-        Retrieve a specific trial related to the solution submitted by the participant themselves.
+        Retrieve status of a specific Trial related to the Solution submitted by the Participant themselves.
       operationId: getMatchTrial
       parameters:
-        - name: matchUuid
+        - name: match_uuid
           in: path
           description: Match UUID
           required: true
           schema:
             $ref: '#/components/schemas/MatchUuid'
           example: 5d7fc778-3e59-4128-a797-2e423c0aa461
-        - name: trialNo
+        - name: trial_no
           in: path
           description: Trial number
           required: true
@@ -83,11 +83,11 @@ paths:
           example: 4
       responses:
         '200':
-          description: Information of the trial
+          description: Status information of the Trial
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MatchTrial'
+                $ref: '#/components/schemas/MatchTrialStatus'
         '404':
           description: The trial specified in the query was not found
           content:
@@ -97,7 +97,7 @@ paths:
       security:
         - ApiKeyAuth: []
 
-  /matches/{matchUuid}/trials/{trialNo}/solution:
+  /matches/{match_uuid}/trials/{trial_no}/solution:
     get:
       tags:
         - trial
@@ -105,14 +105,14 @@ paths:
       summary: Retrieve a solution submitted by the participant themselves.
       operationId: getSolution
       parameters:
-        - name: matchUuid
+        - name: match_uuid
           in: path
           description: Match UUID
           required: true
           schema:
             $ref: '#/components/schemas/MatchUuid'
           example: 5d7fc778-3e59-4128-a797-2e423c0aa461
-        - name: trialNo
+        - name: trial_no
           in: path
           description: Trial number
           required: true
@@ -141,24 +141,24 @@ paths:
 components:
   schemas:
     CreateSolutionResponse:
-      description: Information of the created solution
+      description: Information of the created Solution
       type: object
       properties:
-        trialNo:
+        trial_no:
           type: integer
           format: int32
           description: Trial number
           example: 4
       required:
-        - trialNo
+        - trial_no
 
-    MatchTrial:
-      description: Match Trial information
+    MatchTrialStatus:
+      description: Match Trial status information
       type: object
       properties:
-        matchTrialStatus:
-          description: Status of the Trial
-          $ref: '#/components/schemas/MatchTrialStatus'
+        match_trial_status_type:
+          description: Types of trial status.
+          $ref: '#/components/schemas/MatchTrialStatusType'
         evaluation:
           description: Evaluation results
           $ref: '#/components/schemas/MatchTrialEvaluation'
@@ -166,43 +166,17 @@ components:
           description: Results of Score calculation
           $ref: '#/components/schemas/MatchTrialScore'
       required:
-        - matchTrialStatus
+        - match_trial_status_type_type
 
-    MatchTrialStatus:
-      description: Status of the Trial
+    MatchTrialStatusType:
+      description: Types of trial status.
       type: string
       enum:
-        - Evaluating
-        - Scoring
         - Success
-        - EvaluatorFailed
+        - Scoring
+        - Evaluating
         - ScorerFailed
-
-    Solution:
-      description: Solution information
-      type: object
-      properties:
-        variable:
-          description: Solution space variable
-          type: array
-          items:
-            type: number
-            format: double
-          example: [1.234, -5.678, 9.1011]
-        createdAt:
-          description: Creation date and time
-          type: string
-          format: date-time
-          example: 2024-08-06T10:11:45.789Z
-        createdByParticipant:
-          description: UUID of the participant who created it
-          $ref: '#/components/schemas/ParticipantUuid'
-        createdByUser:
-          description: UUID of the user who created it
-          $ref: '#/components/schemas/UserUuid'
-      required:
-        - variable
-        - createdAt
+        - EvaluatorFailed
 
     MatchTrialEvaluation:
       description: Evaluation results
@@ -221,15 +195,15 @@ components:
         feasible:
           description: Whether it is a feasible solution
           type: boolean
-        extraInfo:
+        extra_info:
           description: Auxiliary information for evaluation
           type: object
-        startedAt:
+        started_at:
           description: Evaluation start date and time
           type: string
           format: date-time
           example: 2024-08-29T10:12:58.123Z
-        finishedAt:
+        finished_at:
           description: Evaluation end date and time
           type: string
           format: date-time
@@ -259,22 +233,48 @@ components:
           type: number
           format: double
           example: 15.1617
-        startedAt:
+        started_at:
           description: Score calculation start date and time
           type: string
           format: date-time
-          example: 2024-08-29T10:12:59.123Z
-        finishedAt:
+          example: 2024-08-29T10:56:02.933Z
+        finished_at:
           description: Score calculation end date and time
           type: string
           format: date-time
-          example: 2024-08-29T10:34:02.592Z
+          example: 2024-08-29T11:01:21.319Z
         error:
           description: Score calculation error information
           type: string
         status:
           description: Score calculation status
           $ref: '#/components/schemas/RunnerStatus'
+      required:
+        - status
+
+    Solution:
+      description: Solution information
+      type: object
+      properties:
+        variable:
+          description: Solution space variable
+          type: array
+          items:
+            type: number
+            format: double
+          example: [1.234, -5.678, 9.1011]
+        created_at:
+          description: Creation date and time
+          type: string
+          format: date-time
+          example: 2024-08-06T10:11:45.789Z
+        created_by:
+          description: UUID of the user who created it
+          $ref: '#/components/schemas/UserUuid'
+      required:
+        - variable
+        - created_at
+        - created_by
 
     MatchTrialNotFound:
       description: The reason why the trial was not found.
@@ -288,12 +288,6 @@ components:
       type: string
       format: uuid
       example: 5d7fc778-3e59-4128-a797-2e423c0aa461
-
-    ParticipantUuid:
-      description: Participant UUID
-      type: string
-      format: uuid
-      example: 912f548d-2bbe-48ab-90ce-e96dae38377d
 
     UserUuid:
       description: User UUID
