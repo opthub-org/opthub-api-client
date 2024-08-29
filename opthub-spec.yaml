@@ -57,6 +57,45 @@ paths:
       security:
         - ApiKeyAuth: []
 
+  /matches/{match_uuid}/trials/{trial_no}/solution:
+    get:
+      tags:
+        - solution
+      summary: Retrieve a solution submitted by the participant themselves.
+      operationId: getSolution
+      parameters:
+        - name: match_uuid
+          in: path
+          description: Match UUID
+          required: true
+          schema:
+            $ref: '#/components/schemas/MatchUuid'
+          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+        - name: trial_no
+          in: path
+          description: Trial number
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 4
+          example: 4
+      responses:
+        '200':
+          description: Information of the Solution
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Solution'
+        '404':
+          description: The trial specified in the query was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchTrialNotFound'
+      security:
+        - ApiKeyAuth: []
+
   /matches/{match_uuid}/trials/{trial_no}:
     get:
       tags:
@@ -88,46 +127,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MatchTrialStatus'
-        '404':
-          description: The trial specified in the query was not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MatchTrialNotFound'
-      security:
-        - ApiKeyAuth: []
-
-  /matches/{match_uuid}/trials/{trial_no}/solution:
-    get:
-      tags:
-        - trial
-        - solution
-      summary: Retrieve a solution submitted by the participant themselves.
-      operationId: getSolution
-      parameters:
-        - name: match_uuid
-          in: path
-          description: Match UUID
-          required: true
-          schema:
-            $ref: '#/components/schemas/MatchUuid'
-          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
-        - name: trial_no
-          in: path
-          description: Trial number
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 4
-          example: 4
-      responses:
-        '200':
-          description: Information of the Solution
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Solution'
         '404':
           description: The trial specified in the query was not found
           content:
