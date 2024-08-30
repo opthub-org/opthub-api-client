@@ -155,7 +155,7 @@ components:
       description: Match Trial status information
       type: object
       properties:
-        match_trial_status_type:
+        type:
           description: Types of trial status.
           $ref: '#/components/schemas/MatchTrialStatusType'
         evaluation:
@@ -165,7 +165,7 @@ components:
           description: Results of Score calculation
           $ref: '#/components/schemas/MatchTrialScore'
       required:
-        - match_trial_status_type_type
+        - type
 
     MatchTrialStatusType:
       description: Types of trial status.
