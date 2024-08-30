@@ -49,6 +49,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateSolutionResponse'
+        '400':
+          description: Invalid format. The solution variable's JSON object must contain either a scalar or a vector, but not both.
         '404':
           description: No such Match UUID
       security:
