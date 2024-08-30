@@ -286,9 +286,15 @@ components:
 
     Variable:
       description: A double-precision floating-point scalar or vector.
-      oneOf:
-        - $ref: '#/components/schemas/Vector'
-        - $ref: '#/components/schemas/Scalar'
+      type: object
+      properties:
+        vector:
+          description: Vector case
+          $ref: '#/components/schemas/Vector'
+        scalar:
+          description: Scalar case
+          $ref: '#/components/schemas/Scalar'
+      example: "{vector: [1.234, -5.678, 9.1011]}"
 
     Scalar:
       description: A double-precision floating-point scalar value
