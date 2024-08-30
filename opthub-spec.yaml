@@ -40,10 +40,7 @@ paths:
           application/json:
             schema:
               description: Solution space variable
-              type: array
-              items:
-                type: number
-                format: double
+              $ref: '#/components/schemas/Variable'
               example: [1.234, -5.678, 9.1011]
       responses:
         '200':
@@ -183,14 +180,11 @@ components:
       properties:
         objective:
           description: The value of the objective function
-          type: array
-          items:
-            type: number
-            format: double
-          example: [12.1314]
+          $ref: '#/components/schemas/Variable'
         constraint:
           description: The value of the constraint condition
-          type: object
+          $ref: '#/components/schemas/Vector'
+          nullable: true
         feasible:
           description: Whether it is a feasible solution
           type: boolean
@@ -257,11 +251,7 @@ components:
       properties:
         variable:
           description: Solution space variable
-          type: array
-          items:
-            type: number
-            format: double
-          example: [1.234, -5.678, 9.1011]
+          $ref: '#/components/schemas/Variable'
         created_at:
           description: Creation date and time
           type: string
@@ -293,6 +283,26 @@ components:
       type: string
       format: uuid
       example: 1e892e70-47ba-4c8e-8563-6aea9019e334
+
+    Variable:
+      description: A double-precision floating-point scalar or vector.
+      oneOf:
+        - $ref: '#/components/schemas/Vector'
+        - $ref: '#/components/schemas/Scalar'
+
+    Scalar:
+      description: A double-precision floating-point scalar value
+      type: number
+      format: double
+      example: -12.1314
+
+    Vector:
+      description: A double-precision floating-point vector.
+      type: array
+      items:
+        type: number
+        format: double
+      example: [1.234, -5.678, 9.1011]
 
   securitySchemes:
     ApiKeyAuth:
