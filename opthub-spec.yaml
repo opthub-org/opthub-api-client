@@ -15,18 +15,16 @@ servers:
   - url: https://example.com/todo/opthub-api-endpoint
 
 tags:
-  - name: solution
-    description: Operations about solution.
   - name: trial
     description: Operations about trial.
 
 paths:
-  /matches/{match_uuid}/solutions:
+  /matches/{match_uuid}/trials:
     post:
       tags:
-        - solution
-      summary: Create solution
-      operationId: createSolution
+        - trial
+      summary: Create match trial
+      operationId: createMatchTrial
       parameters:
         - name: match_uuid
           in: path
@@ -40,58 +38,19 @@ paths:
           application/json:
             schema:
               description: Solution space variable
-              $ref: '#/components/schemas/Variable'
+              $ref: '#/components/schemas/ScalarOrVector'
               example: [1.234, -5.678, 9.1011]
       responses:
         '200':
-          description: Information of the created Solution
+          description: Information of the created match trial
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateSolutionResponse'
+                $ref: '#/components/schemas/MatchTrialResponse'
         '400':
           description: Invalid format. The solution variable's JSON object must contain either a scalar or a vector, but not both.
         '404':
           description: No such Match UUID
-      security:
-        - ApiKeyAuth: []
-
-  /matches/{match_uuid}/trials/{trial_no}/solution:
-    get:
-      tags:
-        - solution
-      summary: Retrieve a solution submitted by the participant themselves.
-      operationId: getSolution
-      parameters:
-        - name: match_uuid
-          in: path
-          description: Match UUID
-          required: true
-          schema:
-            $ref: '#/components/schemas/MatchUuid'
-          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
-        - name: trial_no
-          in: path
-          description: Trial number
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 4
-          example: 4
-      responses:
-        '200':
-          description: Information of the Solution
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Solution'
-        '404':
-          description: The trial specified in the query was not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MatchTrialNotFound'
       security:
         - ApiKeyAuth: []
 
@@ -121,11 +80,11 @@ paths:
           example: 4
       responses:
         '200':
-          description: Status information of the Trial
+          description: Status information of the match trial
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MatchTrialStatus'
+                $ref: '#/components/schemas/MatchTrialResponse'
         '404':
           description: The trial specified in the query was not found
           content:
@@ -135,82 +94,186 @@ paths:
       security:
         - ApiKeyAuth: []
 
+  /matches/{match_uuid}/trials/{trial_no}/evaluation:
+    get:
+      tags:
+        - trial
+      summary: |-
+        Retrieve status of a specific match evaluation related to the Solution submitted by the Participant themselves.
+      operationId: getMatchEvaluation
+      parameters:
+        - name: match_uuid
+          in: path
+          description: Match UUID
+          required: true
+          schema:
+            $ref: '#/components/schemas/MatchUuid'
+          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+        - name: trial_no
+          in: path
+          description: Trial number
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 4
+          example: 4
+      responses:
+        '200':
+          description: Status information of the match trial
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchTrialEvaluation'
+        '404':
+          description: The trial specified in the query was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchTrialNotFound'
+      security:
+        - ApiKeyAuth: []
+
+  /matches/{match_uuid}/trials/{trial_no}/score:
+    get:
+      tags:
+        - trial
+      summary: |-
+        Retrieve status of a specific match score related to the Solution submitted by the Participant themselves.
+      operationId: getMatchScore
+      parameters:
+        - name: match_uuid
+          in: path
+          description: Match UUID
+          required: true
+          schema:
+            $ref: '#/components/schemas/MatchUuid'
+          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+        - name: trial_no
+          in: path
+          description: Trial number
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 4
+          example: 4
+      responses:
+        '200':
+          description: Status information of the match trial
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchTrialScore'
+        '404':
+          description: The trial specified in the query was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchTrialNotFound'
+      security:
+        - ApiKeyAuth: []
 
 components:
   schemas:
-    CreateSolutionResponse:
+    MatchTrialResponse:
       description: Information of the created Solution
       type: object
       properties:
-        trial_no:
+        trialNo:
           type: integer
           format: int32
           description: Trial number
           example: 4
+        status:
+          description: Trial status
+          $ref: '#/components/schemas/MatchTrialStatus'
+        createdAt:
+          description: Creation date and time
+          type: string
+          format: date-time
+          example: 2024-08-06T10:11:45.789Z
       required:
-        - trial_no
+        - trialNo
+        - status
+        - createdAt
 
     MatchTrialStatus:
-      description: Match Trial status information
-      type: object
-      properties:
-        type:
-          description: Types of trial status.
-          $ref: '#/components/schemas/MatchTrialStatusType'
-        evaluation:
-          description: Evaluation results
-          $ref: '#/components/schemas/MatchTrialEvaluation'
-        score:
-          description: Results of Score calculation
-          $ref: '#/components/schemas/MatchTrialScore'
-      required:
-        - type
-
-    MatchTrialStatusType:
       description: Types of trial status.
       type: string
       enum:
-        - Success
-        - Scoring
-        - Evaluating
-        - ScorerFailed
-        - EvaluatorFailed
+        - evaluating
+        - evaluator_failed
+        - scorer_failed
+        - scoring
+        - success
 
     MatchTrialEvaluation:
       description: Evaluation results
       type: object
       properties:
+        status:
+          description: Evaluation status
+          $ref: '#/components/schemas/RunnerStatus'
+        error:
+          description: Evaluation error information
+          type: string
         objective:
           description: The value of the objective function
-          $ref: '#/components/schemas/Variable'
+          $ref: '#/components/schemas/ScalarOrVector'
         constraint:
           description: The value of the constraint condition
-          $ref: '#/components/schemas/Vector'
-          nullable: true
+          $ref: '#/components/schemas/ScalarOrVector'
+        extraInfo:
+          description: Auxiliary information for evaluation
+          type: object
         feasible:
           description: Whether it is a feasible solution
           type: boolean
-        extra_info:
-          description: Auxiliary information for evaluation
-          type: object
-        started_at:
+        startedAt:
           description: Evaluation start date and time
           type: string
           format: date-time
           example: 2024-08-29T10:12:58.123Z
-        finished_at:
+        finishedAt:
           description: Evaluation end date and time
           type: string
           format: date-time
           example: 2024-08-29T10:34:01.592Z
-        error:
-          description: Evaluation error information
-          type: string
-        status:
-          description: Evaluation status
-          $ref: '#/components/schemas/RunnerStatus'
       required:
         - status
+        - startedAt
+        - finishedAt
+
+    MatchTrialScore:
+      description: Results of Score calculation
+      type: object
+      properties:
+        status:
+          description: Score calculation status
+          $ref: '#/components/schemas/RunnerStatus'
+        error:
+          description: Score calculation error information
+          type: string
+        value:
+          description: The value of the Score
+          type: number
+          format: double
+          example: 15.1617
+        startedAt:
+          description: Score calculation start date and time
+          type: string
+          format: date-time
+          example: 2024-08-29T10:56:02.933Z
+        finishedAt:
+          description: Score calculation end date and time
+          type: string
+          format: date-time
+          example: 2024-08-29T11:01:21.319Z
+      required:
+        - status
+        - startedAt
+        - finishedAt
 
     RunnerStatus:
       description: Status of the Trial
@@ -218,61 +281,6 @@ components:
       enum:
         - Success
         - Failed
-
-    MatchTrialScore:
-      description: Results of Score calculation
-      type: object
-      properties:
-        value:
-          description: The value of the Score
-          type: number
-          format: double
-          example: 15.1617
-        started_at:
-          description: Score calculation start date and time
-          type: string
-          format: date-time
-          example: 2024-08-29T10:56:02.933Z
-        finished_at:
-          description: Score calculation end date and time
-          type: string
-          format: date-time
-          example: 2024-08-29T11:01:21.319Z
-        error:
-          description: Score calculation error information
-          type: string
-        status:
-          description: Score calculation status
-          $ref: '#/components/schemas/RunnerStatus'
-      required:
-        - status
-
-    Solution:
-      description: Solution information
-      type: object
-      properties:
-        variable:
-          description: Solution space variable
-          $ref: '#/components/schemas/Variable'
-        created_at:
-          description: Creation date and time
-          type: string
-          format: date-time
-          example: 2024-08-06T10:11:45.789Z
-        created_by:
-          description: UUID of the user who created it
-          $ref: '#/components/schemas/UserUuid'
-      required:
-        - variable
-        - created_at
-        - created_by
-
-    MatchTrialNotFound:
-      description: The reason why the trial was not found.
-      type: string
-      enum:
-        - InvalidMatchUuid
-        - NoSuchTrialNo
 
     MatchUuid:
       description: Match UUID
@@ -286,7 +294,7 @@ components:
       format: uuid
       example: 1e892e70-47ba-4c8e-8563-6aea9019e334
 
-    Variable:
+    ScalarOrVector:
       description: A double-precision floating-point scalar or vector.
       type: object
       properties:
@@ -311,6 +319,14 @@ components:
         type: number
         format: double
       example: [1.234, -5.678, 9.1011]
+
+    MatchTrialNotFound:
+      description: The reason why the trial was not found.
+      type: string
+      enum:
+        - InvalidMatchUuid
+        - NoSuchTrialNo
+
 
   securitySchemes:
     ApiKeyAuth:
