@@ -51,9 +51,63 @@ paths:
               schema:
                 $ref: '#/components/schemas/MatchTrialResponse'
         '400':
-          description: Invalid format. The solution variable's JSON object must contain either a scalar or a vector, but not both.
+          description: Bad request input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - InvalidBodyFormat
+                      - InvalidParameters
+                  message:
+                    type: string
+                    example: "Invalid body format."
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
+          description: Forbidden operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - CompetitionNotStarted
+                      - CompetitionNotInProgress
+                      - ReachSubmitLimit
+                  message:
+                    type: string
+                    example: "Competition is not started."
         '404':
-          description: No such Match UUID
+          description: The entry specified in the query was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - MatchNotFound
+                      - CompetitionNotFound
+                  message:
+                    type: string
+                    example: "Match is not found."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
       security:
         - ApiKeyAuth: []
 
@@ -88,12 +142,64 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MatchTrialResponse'
-        '404':
-          description: The trial specified in the query was not found
+        '400':
+          description: Bad request input
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MatchTrialNotFound'
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - InvalidBodyFormat
+                      - InvalidParameters
+                  message:
+                    type: string
+                    example: "Invalid body format."
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
+          description: Forbidden operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - CompetitionNotStarted
+                      - CompetitionNotInProgress
+                  message:
+                    type: string
+                    example: "Competition is not started."
+        '404':
+          description: The entry specified in the query was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - MatchNotFound
+                      - CompetitionNotFound
+                      - TrialNotFound
+                  message:
+                    type: string
+                    example: "Match is not found."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
       security:
         - ApiKeyAuth: []
 
@@ -128,12 +234,65 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MatchTrialEvaluation'
-        '404':
-          description: The trial specified in the query was not found
+        '400':
+          description: Bad request input
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MatchTrialNotFound'
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - InvalidBodyFormat
+                      - InvalidParameters
+                  message:
+                    type: string
+                    example: "Invalid body format."
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
+          description: Forbidden operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - CompetitionNotStarted
+                      - CompetitionNotInProgress
+                  message:
+                    type: string
+                    example: "Competition is not started."
+        '404':
+          description: The entry specified in the query was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - MatchNotFound
+                      - CompetitionNotFound
+                      - TrialNotFound
+                      - EvaluationNotFound
+                  message:
+                    type: string
+                    example: "Match is not found."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
       security:
         - ApiKeyAuth: []
 
@@ -168,12 +327,65 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MatchTrialScore'
-        '404':
-          description: The trial specified in the query was not found
+        '400':
+          description: Bad request input
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MatchTrialNotFound'
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - InvalidBodyFormat
+                      - InvalidParameters
+                  message:
+                    type: string
+                    example: "Invalid body format."
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
+          description: Forbidden operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - CompetitionNotStarted
+                      - CompetitionNotInProgress
+                  message:
+                    type: string
+                    example: "Competition is not started."
+        '404':
+          description: The entry specified in the query was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - MatchNotFound
+                      - CompetitionNotFound
+                      - TrialNotFound
+                      - ScoreNotFound
+                  message:
+                    type: string
+                    example: "Match is not found."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
       security:
         - ApiKeyAuth: []
 
@@ -323,12 +535,38 @@ components:
         format: double
       example: [1.234, -5.678, 9.1011]
 
-    MatchTrialNotFound:
-      description: The reason why the trial was not found.
+    AuthErrorResponse:
+      description: Authentication error response
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/AuthErrorCode'
+        message:
+          type: string
+          example: "API key is missing."
+
+    AuthErrorCode:
+      description: Authentication error code
       type: string
       enum:
-        - InvalidMatchUuid
-        - NoSuchTrialNo
+        - APIKeyMissing
+        - InvalidAPIKey
+
+    ServerErrorResponse:
+      description: Internal server error response
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/ServerErrorCode'
+        message:
+          type: string
+          example: Unexpected server error.
+
+    ServerErrorCode:
+      description: Internal server error code
+      type: string
+      enum:
+        - UnexpectedServerError
 
 
   securitySchemes:
