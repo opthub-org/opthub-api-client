@@ -9,7 +9,7 @@ info:
   license:
     name: MIT
     url: https://opensource.org/license/mit/
-  version: 0.2.0
+  version: 0.3.0
 
 servers:
   - url: https://api.opthub.ai
