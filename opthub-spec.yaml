@@ -15,15 +15,15 @@ servers:
   - url: https://example.com/todo/opthub-api-endpoint
 
 tags:
-  - name: trial
-    description: Operations about trial.
+  - name: MatchTrials
+    description: Operations about match trials.
 
 paths:
   /matches/{match_uuid}/trials:
     post:
       tags:
-        - trial
-      summary: Create match trial
+        - MatchTrials
+      summary: Create a match trial
       operationId: createMatchTrial
       parameters:
         - name: match_uuid
@@ -38,7 +38,10 @@ paths:
           application/json:
             schema:
               description: Solution space variable
-              $ref: '#/components/schemas/ScalarOrVector'
+              type: object
+              properties:
+                variable:
+                  $ref: '#/components/schemas/ScalarOrVector'
               example: [1.234, -5.678, 9.1011]
       responses:
         '200':
@@ -57,9 +60,9 @@ paths:
   /matches/{match_uuid}/trials/{trial_no}:
     get:
       tags:
-        - trial
+        - MatchTrials
       summary: |-
-        Retrieve status of a specific Trial related to the Solution submitted by the Participant themselves.
+        Retrieve status of a specific Match Trial related to the Solution submitted by the Participant themselves.
       operationId: getMatchTrial
       parameters:
         - name: match_uuid
@@ -97,7 +100,7 @@ paths:
   /matches/{match_uuid}/trials/{trial_no}/evaluation:
     get:
       tags:
-        - trial
+        - MatchTrials
       summary: |-
         Retrieve status of a specific match evaluation related to the Solution submitted by the Participant themselves.
       operationId: getMatchEvaluation
@@ -137,7 +140,7 @@ paths:
   /matches/{match_uuid}/trials/{trial_no}/score:
     get:
       tags:
-        - trial
+        - MatchTrials
       summary: |-
         Retrieve status of a specific match score related to the Solution submitted by the Participant themselves.
       operationId: getMatchScore
@@ -224,7 +227,7 @@ components:
         constraint:
           description: The value of the constraint condition
           $ref: '#/components/schemas/ScalarOrVector'
-        extraInfo:
+        info:
           description: Auxiliary information for evaluation
           type: object
         feasible:
