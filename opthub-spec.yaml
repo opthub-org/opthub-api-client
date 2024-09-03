@@ -3,7 +3,7 @@ info:
   title: OptHub REST API
   description: |-
     OptHub Public REST API.
-  termsOfService: https://example.com/todo/opthub-api-term-of-service
+  termsOfService: https://opthub.notion.site/Terms-of-Service-bd8dc6fc602044dca73b977b0d8069b5
   contact:
     email: dev@opthub.ai
   license:
@@ -12,7 +12,7 @@ info:
   version: 0.2.0
 
 servers:
-  - url: https://example.com/todo/opthub-api-endpoint
+  - url: https://api.opthub.ai
 
 tags:
   - name: MatchTrials
