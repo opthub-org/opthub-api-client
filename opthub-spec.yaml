@@ -389,6 +389,99 @@ paths:
       security:
         - ApiKeyAuth: []
 
+  /matches/{match_uuid}/trials/{trial_no}/solution:
+    get:
+      tags:
+        - MatchTrials
+      summary: |-
+        Retrieve the Solution submitted by the Participant themselves.
+      operationId: getSolution
+      parameters:
+        - name: match_uuid
+          in: path
+          description: Match UUID
+          required: true
+          schema:
+            $ref: '#/components/schemas/MatchUuid'
+          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+        - name: trial_no
+          in: path
+          description: Trial number
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 4
+          example: 4
+      responses:
+        '200':
+          description: Solution information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Solution'
+        '400':
+          description: Bad request input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - InvalidBodyFormat
+                      - InvalidParameters
+                  message:
+                    type: string
+                    example: "Invalid body format."
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
+          description: Forbidden operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - CompetitionNotStarted
+                      - CompetitionNotInProgress
+                  message:
+                    type: string
+                    example: "Competition is not started."
+        '404':
+          description: The entry specified in the query was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - MatchNotFound
+                      - CompetitionNotFound
+                      - TrialNotFound
+                      - SolutionNotFound
+                  message:
+                    type: string
+                    example: "Match is not found."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
 components:
   schemas:
     MatchTrialResponse:
@@ -490,6 +583,21 @@ components:
         - startedAt
         - finishedAt
 
+    Solution:
+      description: Solution information
+      type: object
+      properties:
+        variable:
+          description: Solution variable
+          $ref: '#/components/schemas/ScalarOrVector'
+        createdAt:
+          description: Solution submitted date and time
+          type: string
+          format: date-time
+          example: 2024-08-29T10:08:03.345Z
+      required:
+        - createdAt
+
     RunnerStatus:
       description: Status of the Trial
       type: string
@@ -519,7 +627,7 @@ components:
         scalar:
           description: Scalar case
           $ref: '#/components/schemas/Scalar'
-      example: "{vector: [1.234, -5.678, 9.1011]}"
+      example: { vector: [1.234, -5.678, 9.1011] }
 
     Scalar:
       description: A double-precision floating-point scalar value
