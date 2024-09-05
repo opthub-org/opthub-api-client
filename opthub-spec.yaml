@@ -42,7 +42,7 @@ paths:
               properties:
                 variable:
                   $ref: '#/components/schemas/ScalarOrVector'
-              example: {"variable": [1.234, -5.678, 9.1011]}
+              example: { "variable": { "vector": [1.234, -5.678, 9.1011] } }
       responses:
         '200':
           description: Information of the created match trial
