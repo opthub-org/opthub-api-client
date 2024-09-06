@@ -13,12 +13,9 @@ jobs:
       with:
         submodules: true # Checkout submodules
         fetch-depth: 0 # Fetch all history for accurate versioning
-    - name: Change directory using cd
-      run: |
-        cd opthub-api-client-python
-        echo "Now in the opthub-api-client-python directory"
     - uses: ./.github/workflows/actions/poetry_publish
       with:
+        directory: opthub-api-client-python
         pypi: true
         pypi_token: ${{ secrets.PYPI_API_TOKEN }}
 

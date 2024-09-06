@@ -15,6 +15,10 @@ inputs:
   pypi_token:
     description: "PyPI API token"
     required: false
+  directory:
+    description: "The working directory to run the commands in"
+    required: false
+    default: ${{ github.workspace }}
 runs:
   using: 'composite'
   steps:
@@ -30,20 +34,16 @@ runs:
         curl -sSL https://install.python-poetry.org | python3 -
         echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-    - name: Checkout repository with submodules for opthub_api_client
-      uses: actions/checkout@v3
-      with:
-        submodules: true  # サブモジュールも一緒にチェックアウトする
-        fetch-depth: 0    # 必要に応じて完全な履歴を取得
-
     - name: Install dependencies
       shell: bash
+      working-directory: ${{ inputs.directory }}
       run: |
         echo "Installing dependencies..."
         poetry install
 
     - name: Build
       shell: bash
+      working-directory: ${{ inputs.directory }}
       run: |
         echo "Building package..."
         poetry build
@@ -51,6 +51,7 @@ runs:
     - name: Publish to TestPyPI
       shell: bash
       if: ${{ inputs.testpypi == 'true' }}
+      working-directory: ${{ inputs.directory }}
       env:
         TEST_PYPI_API_TOKEN: ${{ inputs.testpypi_token }}
       run: |
@@ -61,6 +62,7 @@ runs:
     - name: Publish to PyPI
       shell: bash
       if: ${{ inputs.pypi == 'true' }}
+      working-directory: ${{ inputs.directory }}
       env:
         PYPI_API_TOKEN: ${{ inputs.pypi_token }}
       run: |
