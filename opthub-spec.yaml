@@ -1,1 +1,684 @@
-ui/swagger-ui-5.17.14/dist/opthub-spec.yaml
+openapi: 3.0.3
+info:
+  title: OptHub REST API
+  description: |-
+    OptHub Public REST API.
+  termsOfService: https://opthub.notion.site/Terms-of-Service-bd8dc6fc602044dca73b977b0d8069b5
+  contact:
+    email: dev@opthub.ai
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit/
+  version: 0.3.0
+
+servers:
+  - url: https://api.opthub.ai
+
+tags:
+  - name: MatchTrials
+    description: Operations about match trials.
+
+paths:
+  /matches/{match_uuid}/trials:
+    post:
+      tags:
+        - MatchTrials
+      summary: Create a match trial
+      operationId: createMatchTrial
+      parameters:
+        - name: match_uuid
+          in: path
+          description: Match UUID
+          required: true
+          schema:
+            $ref: '#/components/schemas/MatchUuid'
+          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Solution space variable
+              type: object
+              properties:
+                variable:
+                  $ref: '#/components/schemas/ScalarOrVector'
+              example: { "variable": { "vector": [1.234, -5.678, 9.1011] } }
+      responses:
+        '200':
+          description: Information of the created match trial
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchTrialResponse'
+        '400':
+          description: Bad request input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - InvalidBodyFormat
+                      - InvalidParameters
+                  message:
+                    type: string
+                    example: "Invalid body format."
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
+          description: Forbidden operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - CompetitionNotStarted
+                      - CompetitionNotInProgress
+                      - ReachSubmitLimit
+                  message:
+                    type: string
+                    example: "Competition is not started."
+        '404':
+          description: The entry specified in the query was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - MatchNotFound
+                      - CompetitionNotFound
+                  message:
+                    type: string
+                    example: "Match is not found."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+  /matches/{match_uuid}/trials/{trial_no}:
+    get:
+      tags:
+        - MatchTrials
+      summary: |-
+        Retrieve status of a specific Match Trial related to the Solution submitted by the Participant themselves.
+      operationId: getMatchTrial
+      parameters:
+        - name: match_uuid
+          in: path
+          description: Match UUID
+          required: true
+          schema:
+            $ref: '#/components/schemas/MatchUuid'
+          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+        - name: trial_no
+          in: path
+          description: Trial number
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 4
+          example: 4
+      responses:
+        '200':
+          description: Status information of the match trial
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchTrialResponse'
+        '400':
+          description: Bad request input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - InvalidBodyFormat
+                      - InvalidParameters
+                  message:
+                    type: string
+                    example: "Invalid body format."
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
+          description: Forbidden operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - CompetitionNotStarted
+                      - CompetitionNotInProgress
+                  message:
+                    type: string
+                    example: "Competition is not started."
+        '404':
+          description: The entry specified in the query was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - MatchNotFound
+                      - CompetitionNotFound
+                      - TrialNotFound
+                  message:
+                    type: string
+                    example: "Match is not found."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+  /matches/{match_uuid}/trials/{trial_no}/evaluation:
+    get:
+      tags:
+        - MatchTrials
+      summary: |-
+        Retrieve status of a specific match evaluation related to the Solution submitted by the Participant themselves.
+      operationId: getMatchEvaluation
+      parameters:
+        - name: match_uuid
+          in: path
+          description: Match UUID
+          required: true
+          schema:
+            $ref: '#/components/schemas/MatchUuid'
+          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+        - name: trial_no
+          in: path
+          description: Trial number
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 4
+          example: 4
+      responses:
+        '200':
+          description: Status information of the match trial
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchTrialEvaluation'
+        '400':
+          description: Bad request input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - InvalidBodyFormat
+                      - InvalidParameters
+                  message:
+                    type: string
+                    example: "Invalid body format."
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
+          description: Forbidden operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - CompetitionNotStarted
+                      - CompetitionNotInProgress
+                  message:
+                    type: string
+                    example: "Competition is not started."
+        '404':
+          description: The entry specified in the query was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - MatchNotFound
+                      - CompetitionNotFound
+                      - TrialNotFound
+                      - EvaluationNotFound
+                  message:
+                    type: string
+                    example: "Match is not found."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+  /matches/{match_uuid}/trials/{trial_no}/score:
+    get:
+      tags:
+        - MatchTrials
+      summary: |-
+        Retrieve status of a specific match score related to the Solution submitted by the Participant themselves.
+      operationId: getMatchScore
+      parameters:
+        - name: match_uuid
+          in: path
+          description: Match UUID
+          required: true
+          schema:
+            $ref: '#/components/schemas/MatchUuid'
+          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+        - name: trial_no
+          in: path
+          description: Trial number
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 4
+          example: 4
+      responses:
+        '200':
+          description: Status information of the match trial
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchTrialScore'
+        '400':
+          description: Bad request input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - InvalidBodyFormat
+                      - InvalidParameters
+                  message:
+                    type: string
+                    example: "Invalid body format."
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
+          description: Forbidden operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - CompetitionNotStarted
+                      - CompetitionNotInProgress
+                  message:
+                    type: string
+                    example: "Competition is not started."
+        '404':
+          description: The entry specified in the query was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - MatchNotFound
+                      - CompetitionNotFound
+                      - TrialNotFound
+                      - ScoreNotFound
+                  message:
+                    type: string
+                    example: "Match is not found."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+  /matches/{match_uuid}/trials/{trial_no}/solution:
+    get:
+      tags:
+        - MatchTrials
+      summary: |-
+        Retrieve the Solution submitted by the Participant themselves.
+      operationId: getSolution
+      parameters:
+        - name: match_uuid
+          in: path
+          description: Match UUID
+          required: true
+          schema:
+            $ref: '#/components/schemas/MatchUuid'
+          example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+        - name: trial_no
+          in: path
+          description: Trial number
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 4
+          example: 4
+      responses:
+        '200':
+          description: Solution information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Solution'
+        '400':
+          description: Bad request input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - InvalidBodyFormat
+                      - InvalidParameters
+                  message:
+                    type: string
+                    example: "Invalid body format."
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
+          description: Forbidden operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - CompetitionNotStarted
+                      - CompetitionNotInProgress
+                  message:
+                    type: string
+                    example: "Competition is not started."
+        '404':
+          description: The entry specified in the query was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - MatchNotFound
+                      - CompetitionNotFound
+                      - TrialNotFound
+                      - SolutionNotFound
+                  message:
+                    type: string
+                    example: "Match is not found."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+components:
+  schemas:
+    MatchTrialResponse:
+      description: Information of the created Solution
+      type: object
+      properties:
+        trialNo:
+          type: integer
+          format: int32
+          description: Trial number
+          example: 4
+        status:
+          description: Trial status
+          $ref: '#/components/schemas/MatchTrialStatus'
+        createdAt:
+          description: Creation date and time
+          type: string
+          format: date-time
+          example: 2024-08-06T10:11:45.789Z
+      required:
+        - trialNo
+        - status
+        - createdAt
+
+    MatchTrialStatus:
+      description: Types of trial status.
+      type: string
+      enum:
+        - evaluating
+        - evaluator_failed
+        - scorer_failed
+        - scoring
+        - success
+
+    MatchTrialEvaluation:
+      description: Evaluation results
+      type: object
+      properties:
+        status:
+          description: Evaluation status
+          $ref: '#/components/schemas/RunnerStatus'
+        error:
+          description: Evaluation error information
+          type: string
+        objective:
+          description: The value of the objective function
+          $ref: '#/components/schemas/ScalarOrVector'
+        constraint:
+          description: The value of the constraint condition
+          $ref: '#/components/schemas/ScalarOrVector'
+        info:
+          description: Auxiliary information for evaluation
+          type: object
+        feasible:
+          description: Whether it is a feasible solution
+          type: boolean
+        startedAt:
+          description: Evaluation start date and time
+          type: string
+          format: date-time
+          example: 2024-08-29T10:12:58.123Z
+        finishedAt:
+          description: Evaluation end date and time
+          type: string
+          format: date-time
+          example: 2024-08-29T10:34:01.592Z
+      required:
+        - status
+        - startedAt
+        - finishedAt
+
+    MatchTrialScore:
+      description: Results of Score calculation
+      type: object
+      properties:
+        status:
+          description: Score calculation status
+          $ref: '#/components/schemas/RunnerStatus'
+        error:
+          description: Score calculation error information
+          type: string
+        value:
+          description: The value of the Score
+          type: number
+          format: double
+          example: 15.1617
+        startedAt:
+          description: Score calculation start date and time
+          type: string
+          format: date-time
+          example: 2024-08-29T10:56:02.933Z
+        finishedAt:
+          description: Score calculation end date and time
+          type: string
+          format: date-time
+          example: 2024-08-29T11:01:21.319Z
+      required:
+        - status
+        - startedAt
+        - finishedAt
+
+    Solution:
+      description: Solution information
+      type: object
+      properties:
+        variable:
+          description: Solution variable
+          $ref: '#/components/schemas/ScalarOrVector'
+        createdAt:
+          description: Solution submitted date and time
+          type: string
+          format: date-time
+          example: 2024-08-29T10:08:03.345Z
+      required:
+        - createdAt
+
+    RunnerStatus:
+      description: Status of the Trial
+      type: string
+      enum:
+        - Success
+        - Failed
+
+    MatchUuid:
+      description: Match UUID
+      type: string
+      format: uuid
+      example: 5d7fc778-3e59-4128-a797-2e423c0aa461
+
+    UserUuid:
+      description: User UUID
+      type: string
+      format: uuid
+      example: 1e892e70-47ba-4c8e-8563-6aea9019e334
+
+    ScalarOrVector:
+      description: A double-precision floating-point scalar or vector.
+      type: object
+      properties:
+        vector:
+          description: Vector case
+          $ref: '#/components/schemas/Vector'
+        scalar:
+          description: Scalar case
+          $ref: '#/components/schemas/Scalar'
+      example: { vector: [1.234, -5.678, 9.1011] }
+
+    Scalar:
+      description: A double-precision floating-point scalar value
+      type: number
+      format: double
+      example: -12.1314
+
+    Vector:
+      description: A double-precision floating-point vector.
+      type: array
+      items:
+        type: number
+        format: double
+      example: [1.234, -5.678, 9.1011]
+
+    AuthErrorResponse:
+      description: Authentication error response
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/AuthErrorCode'
+        message:
+          type: string
+          example: "API key is missing."
+
+    AuthErrorCode:
+      description: Authentication error code
+      type: string
+      enum:
+        - APIKeyMissing
+        - InvalidAPIKey
+
+    ServerErrorResponse:
+      description: Internal server error response
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/ServerErrorCode'
+        message:
+          type: string
+          example: Unexpected server error.
+
+    ServerErrorCode:
+      description: Internal server error code
+      type: string
+      enum:
+        - UnexpectedServerError
+
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
