@@ -8,9 +8,7 @@ OptHubの公開REST APIです。
     OptHub公開APIのOpenAPI仕様書です。
     公開APIの仕様変更の際は、このファイルを編集してください。
 
-    * *Swagger UI* 導入までの暫定:
-        [Swaggerの公式エディタ](https://editor.swagger.io/)にこのファイルの内容を入力すると、
-        API仕様がわかりやすく表示されます。
+    ドキュメントは https://docs.opthub.ai/ にデプロイされます。
 
 以下のスクリプトの実行にはdockerのインストールが必要です。
 
