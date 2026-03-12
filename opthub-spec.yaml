@@ -5,14 +5,14 @@ info:
     OptHub Public REST API.
   termsOfService: https://opthub.notion.site/Terms-of-Service-bd8dc6fc602044dca73b977b0d8069b5
   contact:
-    email: dev@opthub.ai
+    email: competition@opthub.ai
   license:
     name: MIT
     url: https://opensource.org/license/mit/
   version: 0.3.0
 
 servers:
-  - url: https://api.opthub.ai
+  - url: https://api.competition.opthub.ai
 
 tags:
   - name: MatchTrials
